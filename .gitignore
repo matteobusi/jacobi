@@ -336,4 +336,5 @@ TSWLatexianTemp*
 # Executables
 *.exe
 *.out
-*.app
+*.app.idea
+*~
