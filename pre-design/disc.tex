@@ -1,0 +1,27 @@
+The idea is to given three different implementations: a sequential one, a \lstinline|pthread| one, and a \lstinline|FastFlow| one using the \emph{parallel for}.
+
+\subsection{Outline of the ideas}
+A possible schema for the sequential implementation is the following:
+\begin{lstlisting}
+Initialize $A$, $b$, $x^{(0)}$.
+Compute $D$, $D^{-1}$.
+$k = 0$
+$\Delta x = D^{-1} (b - Ax^{(k)})$
+
+while $||\Delta x||_2^2 \geq \varepsilon$:
+	$\Delta x = D^{-1} (b - Ax^{(k)})$
+	$x^{(k+1)} = x^{(k)} + \Delta x$
+	$k$++
+\end{lstlisting}
+\noindent
+As is evident from the pseudo-code above the critical points are in the evaluation of the computation of $\Delta x$ and in the computation of the norm.\\
+In the \lstinline|pthread|-based implementation the following considerations will be used:
+\begin{description}
+	\item[Computation of $\Delta x$] It can be both vectorized and parallelized.
+	In this case each worker will compute the product of a matrix row and the vector.
+	\item[The norm evaluation] can be parallelized and vectorized too, but some profiling is needed to determine whether is necessary or not to parallelize the computation, since it may be a too fine-grained computation.
+\end{description}
+Moreover some sort of synchronization at the end of the body of the loop is needed to correctly compute the norm, this may affect the performance in case of unbalanced load between workers (e.g.\ with some particular matrices).\\
+For \lstinline|FastFlow|-based implementation most of the ideas stated above hold.
+Most important differences lies in the parallelization of the computation of $\Delta x$ that will be achieved using \lstinline|FastFlow|'s \emph{parallel for} and in the 
+absence of the need of \emph{explicit} synchronization mechanisms at the end of body loop. 

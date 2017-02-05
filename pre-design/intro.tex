@@ -1,0 +1,23 @@
+A Jacobi iterative method implementation to solve linear systems is required.
+Given a linear system in the form:
+\begin{equation*}
+	Ax = b
+\end{equation*}
+where the searched solution is $x \in \mathbb{R}^N$, and the known data are $A \in \mathbb{R}^{N x N}$, $b \in \mathbb{R}^N$.\\
+The Jacobi method works by decomposing $A$ as $D + R$ s.t.\:
+\begin{equation*}
+d_{i, j} = \left\{ \begin{array}{ll}
+a_{i, i} & \mbox{if $i = j$}\\
+0 & \mbox{o.w.}\end{array} \right.
+\qquad
+r_{i, j} = \left\{ \begin{array}{ll}
+a_{i, j} & \mbox{if $i \neq j$}\\
+0 & \mbox{o.w.}\end{array} \right.
+\end{equation*}
+and solving for $x$.
+At the $k+1$-th iteration the approximate solution is:
+\begin{equation*}
+x^{(k+1)} = x^{(k)} + D^{-1} (b - Ax^{(k)})
+\end{equation*}
+given an initial guess $x^{(0)}$.
+The method proceeds as a convergence criterion is met, e.g.\ $|| A x - b ||_2^2 < \varepsilon$, with $\varepsilon$ the wanted tolerance.
