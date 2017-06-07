@@ -6,11 +6,7 @@
 
 using namespace std;
 
-#define MAX 50
-
-// #define VERBOSE
-#define PRINT_CSV
-// #define READ_FROM_CIN
+#define MAX 100
 
 enum COMPUTATION_METHOD
 {
@@ -57,84 +53,86 @@ void fillInitialGuessVector(double* x, int r)
         x[i] = randDouble(-MAX, MAX);
 }
 
+void usage(char* exec)
+{
+    cerr << "Usage: " << exec << " N ITER ERR METHOD [NWORKERS]" << endl;
+    cerr << "Where: " << endl;
+    cerr << "N : is the size of the matrix A" << endl;
+    cerr << "ITER : is the maximum number of iterations" << endl;
+    cerr << "ERR : is the maximum norm of an acceptable error" << endl;
+    cerr << "METHOD: is either" << endl;
+    cerr << "\ts : indicating that the sequential implementation must be used" << endl;
+    cerr << "\tf : indicating that the FastFlow implementation must be used" << endl;
+    cerr << "\tp : indicating that the PThread implementation must be used" << endl;
+    cerr << "NWORKERS : the number of workers that should be used (ignored if METHOD is 's')" << endl;
+    cerr << endl << "Produces a CSV line, in the form:" << endl;
+    cerr << "\tN_WORKERS N_ITERATIONS COMP_TIME UPD_TIME CONV_TIME LATENCY ERROR" << endl;
+}
+
 int main(int argc, char* argv[])
 {
     /* Setup */
     srand(42);
 
-    #ifdef READ_FROM_CIN
-    int N, MAX_ITERATIONS;
-    double EPS;
-    int nworkers;
-    COMPUTATION_METHOD method;
-
-    cin >> N;
-    cin >> MAX_ITERATIONS;
-    cin >> EPS;
-    cin >> method;
-    cin >> nworkers;
-    #else
     /* Read parameters */
     if (argc < 5)
     {
-        cerr << "Usage: " << argv[0] << " N MAX_IT EPS METHOD [NWORKERS]" << endl;
-        cerr << "Where " << "METHOD must be 0 for sequential, 1 for fast-flow and 2 for pthread." << endl;
-        cerr << "Produces on stdout a line of a csv file, in the form: NWORKERS, NITERATIONS, TIME, ERROR" << endl;
-
-        return -1;
+        usage(argv[0]);
+        exit(-1);
     }
 
     int N = atoi(argv[1]);
     int MAX_ITERATIONS = atoi(argv[2]);
     double EPS = atof(argv[3]);
-    COMPUTATION_METHOD method = (COMPUTATION_METHOD) atoi(argv[4]);
+
+    COMPUTATION_METHOD method = SEQUENTIAL;
+    switch (argv[4][0]) /* First char is enough */
+    {
+        case 'f':
+            method = FASTFLOW;
+            break;
+        case 'p':
+            method = PTHREAD;
+            break;
+    }
+    
     int nworkers = 1;
 
-    if (method != SEQUENTIAL)
+    if (method != SEQUENTIAL && argc > 5)
         nworkers = atoi(argv[5]);
-    #endif
+    else if (method != SEQUENTIAL && argc < 6)
+    {
+        usage(argv[0]);
+        exit(-1);
+    }
+
     /* Generate a diagonal dominant matrix of the correct size, and the vectors of known terms and solution */
     double** A = new double*[N];
     double* b = new double[N];
     double* x = new double[N];
 
+    if (A == NULL || b == NULL || x == NULL)
+    {
+        cerr << "Error while allocating resources." << endl;
+        exit(-1);
+    }
+
     for (int i=0; i < N; i++)
+    {
         A[i] = new double[N];
+        if (A[i] == NULL)
+        {
+            cerr << "Error while allocating resources." << endl;
+            exit(-1);
+        }
+    }
 
-    #ifdef READ_FROM_CIN
-    for (int i=0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            cin >> A[i][j];
-
-    for (int i=0; i < N; i++)
-        cin >> b[i];
-
-    for (int i=0; i < N; i++)
-        cin >> x[i];
-    #else
+    /* And fill them properly to assure convergence */
     fillDiagDominantMatrix(A, N, N);
     fillKnownVector(b, N);
     fillInitialGuessVector(x, N);
-    #endif
 
-    #ifdef VERBOSE
-    cout << "## A ##" << endl;
-    for (int i = 0; i < N; i++)
-    {
-        for(int j = 0; j < N; j++)
-            cout << A[i][j] << " ";
-        cout << endl;
-    }
-    cout << endl << "## b^T : ";
-    for (int i = 0; i < N; i++)
-        cout << b[i] << " ";
-
-    cout << endl << "## (x_0^T) : ";
-    for (int i = 0; i < N; i++)
-        cout << x[i] << " ";
-    #endif
-
-    /* Jacobi Algorithm */
+    /* Choose the proper solving method */
     JacobiSolver* js = NULL;
 
     if (method == SEQUENTIAL)
@@ -144,21 +142,11 @@ int main(int argc, char* argv[])
     else if (method == PTHREAD)
         js = new JacobiPThreadSolver((const double**)A, (const double*)b, N, nworkers);
 
+    /* Solve the problem */
     JacobiReport report = js->solve(MAX_ITERATIONS, EPS, x);
-
-    #ifdef VERBOSE
-    cout << endl << "## (x_solution^T) : ";
-    for (int i = 0; i < N; i++)
-        cout << x[i] << " ";
-
-    cout << endl << "Error: " << report.error << endl;
-    cout << "Solved in " << report.nIterations << " iterations." << endl;
-    cout << "Took " << report.time << " s using " << report.nWorkers << " workers." << endl;
-    #endif
-
-    #ifdef PRINT_CSV
+    
+    /* Produce results */
     cout << report << endl;
-    #endif
 
     /* Release resources */
     for (int i=0; i < N; i++)

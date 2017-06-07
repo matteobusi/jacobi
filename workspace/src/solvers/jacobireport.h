@@ -13,15 +13,18 @@ class JacobiReport
 public:
     friend std::ostream &operator<<(std::ostream &os, const JacobiReport &report)
     {
-        os << report.nWorkers << ", " << report.nIterations << ", " << report.time << ", " << report.error;
+        double latency = report.compTime + report.updateTime + report.convTime;
+        os << report.nWorkers << "," << report.nIterations << "," << report.compTime << "," \
+                                        << report.updateTime << "," << report.convTime << "," << latency << "," << report.error;
         return os;
     }
 
-public:
     int nIterations;
     double error;
     int nWorkers;
-    double time;
+    double compTime;
+    double updateTime;
+    double convTime;
 };
 
 
