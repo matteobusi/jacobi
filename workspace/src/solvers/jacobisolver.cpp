@@ -27,20 +27,20 @@ JacobiReport JacobiSolver::solve(int maxIterations, double eps, double *x)
         deltax((const double*)x, dx);
         end = std::chrono::system_clock::now();
 
-        jr.compTime += (end-start).count();
+        jr.compTime += ((std::chrono::duration<double>)(end-start)).count();
 
         start = std::chrono::system_clock::now();
         update(x, (const double*)dx);
         end = std::chrono::system_clock::now();
 
-        jr.updateTime += (end-start).count();
+        jr.updateTime += ((std::chrono::duration<double>)(end-start)).count();
+        k++;
 
         start = std::chrono::system_clock::now();
         conv = convergenceCheck(k, maxIterations, eps, (const double*)dx);
         end = std::chrono::system_clock::now();
 
-        jr.convTime += (end-start).count();
-        k++;
+        jr.convTime += ((std::chrono::duration<double>)(end-start)).count();
     }
 
     jr.error = norm(dx);
