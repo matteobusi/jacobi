@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -g   CMakeFiles/testingPerf.dir/main.cpp.o  -o testingPerf -lpthread 

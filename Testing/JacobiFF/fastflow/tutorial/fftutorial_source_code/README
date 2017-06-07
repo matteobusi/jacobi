@@ -1,0 +1,33 @@
+Directory contents:
+
+examples:
+	imagesfilter        -- images filtering application
+	mandelbrot_stream   -- mandelbrot set computed using stream parallelism
+	dotprod             -- dot-product computation (map+reduction) 
+	mandelbrot_dp       -- mandelbrot set computed using a DP approach
+	matmul              -- matrix multiplication algorithm (standard ijk)
+	sobel               -- Sobel filter application
+	blk_matmul          -- block-based matrix multiplication
+	workflow            -- a simple workflow application
+
+
+tests:
+	accelerator.cpp      
+	arraysum.cpp         
+	arraysum2.cpp         
+	farm_misd.cpp
+	ff_send_out_to.cpp
+	hello_farm.cpp
+	hello_farm2.cpp
+	hello_farm3.cpp
+	hello_farm4.cpp	
+	hello_map.cpp
+	hello_mdf.cpp
+	hello_node.cpp
+	hello_pipe.cpp
+	hello_pipe2.cpp
+	hello_ofarm.cpp
+	parfor1.cpp
+	fancy_pipeline.cpp
+	farm_misd.cpp
+	feedback.cpp
