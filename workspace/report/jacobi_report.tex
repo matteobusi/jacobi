@@ -1,0 +1,97 @@
+\documentclass[11pt,a4paper,oneside,titlepage]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{minitoc}
+\author{Matteo Busi}
+\title{SPM Final Project Report}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+\newcommand{\HRuleL}{\rule{1.1\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\begin{document}
+	
+	\begin{titlepage}
+				
+		\center % Center everything on the page
+		
+		%----------------------------------------------------------------------------------------
+		%	HEADING SECTIONS
+		%----------------------------------------------------------------------------------------
+		
+		\textsc{\LARGE Universit\`a di Pisa}\\[1.5cm] % Name of your university/college
+		\textsc{\Large Department of Computer Science}\\[1.5cm] % Major heading such as course name
+		%\textsc{\large SPM Final Project Report}\\[0.5cm] % Minor heading such as course title
+		
+		%----------------------------------------------------------------------------------------
+		%	TITLE SECTION
+		%----------------------------------------------------------------------------------------
+		
+		\HRule \\[1cm]
+		{ \huge \bfseries SPM Final Project Report}\\[0.4cm] % Title of your document
+		{ \Large The Jacobi Iterative Method }\\[0.4cm]
+		\HRule \\[1.5cm]
+		
+		%----------------------------------------------------------------------------------------
+		%	AUTHOR SECTION
+		%----------------------------------------------------------------------------------------
+		
+%		\begin{minipage}{0.4\textwidth}
+%			\begin{flushleft} \large
+%				\emph{Author:}\\
+%				Matteo \textsc{Busi} % Your name
+%			\end{flushleft}
+%		\end{minipage}
+%		~
+%		\begin{minipage}{0.4\textwidth}
+%			\begin{flushright} \large
+%				\emph{Supervisor:} \\
+%				Dr. James \textsc{Smith} % Supervisor's Name
+%			\end{flushright}
+%		\end{minipage}\\[2cm]
+		
+		% If you don't want a supervisor, uncomment the two lines below and remove the section above
+		\Large %\emph{Author:}\\
+		\textsc{Matteo Busi}\\[0.4cm]% Your name
+		\large
+		\textsc{Student ID. 494087}\\[3cm]
+		
+		%----------------------------------------------------------------------------------------
+		%	DATE SECTION
+		%----------------------------------------------------------------------------------------
+		
+		{\large \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
+		
+		%----------------------------------------------------------------------------------------
+		%	LOGO SECTION
+		%----------------------------------------------------------------------------------------
+		
+		%\includegraphics{logo.png}\\[1cm] % Include a department/university logo - this will require the graphicx package
+		
+		%----------------------------------------------------------------------------------------
+		
+		\vfill % Fill the rest of the page with whitespace
+		
+	\end{titlepage}
+
+	\section{Introduction} \label{sec:intro}
+		\input{sections/intro}
+		
+	\section{Design and expected performances} \label{sec:design}
+		\input{sections/design}
+		
+	\section{Implementation} \label{sec:implementation}
+		\input{sections/implementation}
+		
+	\section{Experiments methodology} \label{sec:methodology}
+		\input{sections/methodology}
+	
+	\section{Experimental results} \label{sec:results}
+		\input{sections/results}
+	
+	\section{User guide} \label{sec:guide}
+		\input{sections/guide}
+	
+\end{document}
