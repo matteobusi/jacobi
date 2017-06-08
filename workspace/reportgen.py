@@ -10,11 +10,11 @@ sns.set(style="whitegrid")
 sns.set_context("paper")
 
 for p in ["host", "mic"]:
-    for m in ["ff", "pt"]:
+    for m in ["ff", "th"]:
         compl_seq = pd.DataFrame()
         compl_m = pd.DataFrame()
 
-        print("Plotting ", p, m)
+        print("Plotting", p, m)
         for i in [5000, 10000, 15000, 30000]:
             df_seq = pd.read_csv("results/res_seq_" + p + "_" + str(i) + ".csv", delimiter=' *, *', engine='python')
             df_m = pd.read_csv("results/res_"+ m + "_" + p + "_" + str(i) +".csv", delimiter=' *, *', engine='python')

@@ -27,11 +27,11 @@ do
     then
 	RES_FF_FILE="results/res_ff_mic_$N.csv"
 	RES_SEQ_FILE="results/res_seq_mic_$N.csv"
-	RES_PT_FILE="results/res_pt_mic_$N.csv"
+	RES_TH_FILE="results/res_th_mic_$N.csv"
     else
 	RES_FF_FILE="results/res_ff_host_$N.csv"
 	RES_SEQ_FILE="results/res_seq_host_$N.csv"
-	RES_PT_FILE="results/res_pt_host_$N.csv"
+	RES_TH_FILE="results/res_th_host_$N.csv"
     fi
     echo "N = $N"
     
@@ -59,16 +59,16 @@ do
 	echo "Done"
     done
 	     
-    echo "Running pthread"
+    echo "Running thread"
     echo $HEADER > $RES_PT_FILE
     for i in 1 2 $(seq 4 $WORKER_STEPS $[nw-1]) $nw
     do
 	echo -n "Working with $i ... "
         if [[ "$1" == "MIC" ]]
 	then
-	    ssh mic1 "./jacobim $N $MAX_ITER $EPS p $i" >> $RES_PT_FILE
+	    ssh mic1 "./jacobim $N $MAX_ITER $EPS t $i" >> $RES_TH_FILE
 	else
-	    bin/jacobix $N $MAX_ITER $EPS p $i >> $RES_PT_FILE
+	    bin/jacobix $N $MAX_ITER $EPS t $i >> $RES_TH_FILE
         fi
 	echo "Done"
     done

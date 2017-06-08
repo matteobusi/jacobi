@@ -2,7 +2,7 @@
 #include "solvers/jacobisolver.h"
 #include "solvers/jacobisequentialsolver.h"
 #include "solvers/jacobiffsolver.h"
-#include "solvers/jacobipthreadsolver.h"
+#include "solvers/jacobithreadsolver.h"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ enum COMPUTATION_METHOD
 {
     SEQUENTIAL,
     FASTFLOW,
-    PTHREAD
+    THREAD
 };
 
 /* Helper functions */
@@ -63,7 +63,7 @@ void usage(char* exec)
     cerr << "METHOD: is either" << endl;
     cerr << "\ts : indicating that the sequential implementation must be used" << endl;
     cerr << "\tf : indicating that the FastFlow implementation must be used" << endl;
-    cerr << "\tp : indicating that the PThread implementation must be used" << endl;
+    cerr << "\tt : indicating that the Thread implementation must be used" << endl;
     cerr << "NWORKERS : the number of workers that should be used (ignored if METHOD is 's')" << endl;
     cerr << "GRAIN : the grain of the computation (only if METHOD is 'f')" << endl;
     cerr << endl << "Produces a CSV line, in the form:" << endl;
@@ -92,15 +92,15 @@ int main(int argc, char* argv[])
         case 'f':
             method = FASTFLOW;
             break;
-        case 'p':
-            method = PTHREAD;
+        case 't':
+            method = THREAD;
             break;
     }
     
     int nworkers = 1;
     int grain = 1;
 
-    if (method == PTHREAD)
+    if (method == THREAD)
         if (argc < 6)
         {
             usage(argv[0]);
@@ -153,8 +153,8 @@ int main(int argc, char* argv[])
         js = new JacobiSequentialSolver((const float**)A, (const float*)b, N);
     else if (method == FASTFLOW)
         js = new JacobiFFSolver((const float**)A, (const float*)b, N, nworkers, grain);
-    else if (method == PTHREAD)
-        js = new JacobiPThreadSolver((const float**)A, (const float*)b, N, nworkers);
+    else if (method == THREAD)
+        js = new JacobiThreadSolver((const float**)A, (const float*)b, N, nworkers);
 
     /* Solve the problem */
     JacobiReport report = js->solve(MAX_ITERATIONS, EPS, x);

@@ -1,13 +1,13 @@
-#include "jacobipthreadsolver.h"
+#include "jacobithreadsolver.h"
 
-void JacobiPThreadSolver::deltax(const float* x, float *dest)
+void JacobiThreadSolver::deltax(const float* x, float *dest)
 {
     std::thread* workers = new std::thread[mnWorkers];
 
     int chunkSize = mN/mnWorkers;
 
     for (int w=0; w < mnWorkers; w++)
-        workers[w] = std::thread(&JacobiPThreadSolver::threadBody, this, w*chunkSize, (w+1)*chunkSize, x, dest);
+        workers[w] = std::thread(&JacobiThreadSolver::threadBody, this, w*chunkSize, (w+1)*chunkSize, x, dest);
 
     for (int w=0; w < mnWorkers; w++)
         workers[w].join();
@@ -15,7 +15,7 @@ void JacobiPThreadSolver::deltax(const float* x, float *dest)
     delete [] workers;
 }
 
-void JacobiPThreadSolver::threadBody(int minI, int maxI, const float* x, float* dest)
+void JacobiThreadSolver::threadBody(int minI, int maxI, const float* x, float* dest)
 {
     for (int i=minI; i < maxI; i++)
     {
@@ -27,8 +27,4 @@ void JacobiPThreadSolver::threadBody(int minI, int maxI, const float* x, float* 
             s+= mA[i][j]*x[j];
         dest[i] = (mb[i] - s)/mA[i][i];
     }
-}
-
-JacobiPThreadSolver::JacobiPThreadSolver(const float **A, const float *b, int N, int nWorkers) : JacobiSolver(A, b, N), mnWorkers(nWorkers)
-{
 }
