@@ -14,11 +14,12 @@
 class JacobiFFSolver : public JacobiSolver
 {
 public:
-    JacobiFFSolver(const double** A, const double* b, int N, int nWorkers) : JacobiSolver(A, b, N), mnWorkers(nWorkers) {}
+    JacobiFFSolver(const double** A, const double* b, int N, int nWorkers);
+    virtual ~JacobiFFSolver() {delete pf;}
 
 private:
     int mnWorkers;
-
+    ff::ParallelFor* pf;
     void deltax(const double *x, double *dest);
     int getNWorkers() { return mnWorkers; };
 };

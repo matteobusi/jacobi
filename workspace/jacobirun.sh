@@ -25,7 +25,7 @@ do
     # FILES
     if [[ "$1" == "MIC" ]]
     then
-	RES_FF_FILE="results/es_ff_mic_$N.csv"
+	RES_FF_FILE="results/res_ff_mic_$N.csv"
 	RES_SEQ_FILE="results/res_seq_mic_$N.csv"
 	RES_PT_FILE="results/res_pt_mic_$N.csv"
     else
@@ -47,7 +47,7 @@ do
     
     echo "Running fastflow"
     echo $HEADER  > $RES_FF_FILE
-    for i in 1 2 $(seq 4 $WORKER_STEPS $nw)
+    for i in 1 2 $(seq 4 $WORKER_STEPS $nw) $nw
     do
 	echo -n "Working with $i ... "
 	if [[ "$1" == "MIC" ]]
@@ -61,7 +61,7 @@ do
 	     
     echo "Running pthread"
     echo $HEADER > $RES_PT_FILE
-    for i in 1 2 $(seq 4 $WORKER_STEPS $nw)
+    for i in 1 2 $(seq 4 $WORKER_STEPS $nw) $nw
     do
 	echo -n "Working with $i ... "
         if [[ "$1" == "MIC" ]]
