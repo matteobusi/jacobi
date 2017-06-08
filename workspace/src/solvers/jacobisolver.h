@@ -8,6 +8,7 @@ class JacobiSolver
 protected:
     const double** mA;
     const double* mb;
+    double* dx;
     int mN;
 
     virtual void deltax(const double* x, double *dest) = 0;
@@ -18,8 +19,8 @@ protected:
     virtual int getNWorkers() { return 1; }
 
 public:
-    JacobiSolver(const double** A, const double* b, int N) : mA(A), mb(b), mN(N) {};
-
+    JacobiSolver(const double** A, const double* b, int N) : mA(A), mb(b), mN(N) { dx = new double[mN]; };
+    virtual ~JacobiSolver() { delete[] dx; }
     JacobiReport solve(int maxIterations, double eps, double* x);
 };
 

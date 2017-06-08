@@ -6,7 +6,7 @@
 
 JacobiFFSolver::JacobiFFSolver(const double** A, const double* b, int N, int nWorkers) : JacobiSolver(A, b, N), mnWorkers(nWorkers)
 {
-    pf = new ff::ParallelFor(mnWorkers, true);
+    pf = new ff::ParallelFor(mnWorkers, true, true);
 }
 
 void JacobiFFSolver::deltax(const double* x, double *dest)
@@ -25,4 +25,3 @@ void JacobiFFSolver::deltax(const double* x, double *dest)
         dest[i] = (mb[i] - s)/mA[i][i];
     }, mnWorkers);
 }
-

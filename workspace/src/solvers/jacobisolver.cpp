@@ -12,8 +12,6 @@ JacobiReport JacobiSolver::solve(int maxIterations, double eps, double *x)
     std::chrono::time_point<std::chrono::system_clock> start, end;  
     JacobiReport jr;
 
-    double* dx = new double[mN];
-
     int k = 0;
     bool conv = false;
 
@@ -46,8 +44,6 @@ JacobiReport JacobiSolver::solve(int maxIterations, double eps, double *x)
     jr.error = norm(dx);
     jr.nIterations = k;
     jr.nWorkers = getNWorkers();
-
-    delete[] dx;
 
     return jr;
 }

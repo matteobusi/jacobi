@@ -2,7 +2,7 @@ CC=g++
 
 src = src/main.cpp $(wildcard src/solvers/*.cpp)
 
-CFLAGS = -O3 -I../fastflow -std=c++11 -DNO_DEFAULT_MAPPINGS
+CFLAGS = -O3 -I/home/caos/fastflow -std=c++11
 # VECREPORT = -qopt-report-phase=vec -qopt-report=2
 LDFLAGS = -lpthread
 
