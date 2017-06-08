@@ -1,7 +1,3 @@
-//
-// Created by caos on 07/02/17.
-//
-
 #ifndef JACOBI_JACOBIREPORT_H
 #define JACOBI_JACOBIREPORT_H
 
@@ -13,18 +9,18 @@ class JacobiReport
 public:
     friend std::ostream &operator<<(std::ostream &os, const JacobiReport &report)
     {
-        double latency = report.compTime + report.updateTime + report.convTime;
+        float latency = report.compTime + report.updateTime + report.convTime;
         os << report.nWorkers << "," << report.nIterations << "," << report.compTime << "," \
                                         << report.updateTime << "," << report.convTime << "," << latency << "," << report.error;
         return os;
     }
 
     int nIterations;
-    double error;
+    float error;
     int nWorkers;
-    double compTime;
-    double updateTime;
-    double convTime;
+    float compTime;
+    float updateTime;
+    float convTime;
 };
 
 

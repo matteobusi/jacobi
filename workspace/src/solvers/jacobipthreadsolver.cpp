@@ -1,10 +1,6 @@
-//
-// Created by caos on 07/02/17.
-//
-
 #include "jacobipthreadsolver.h"
 
-void JacobiPThreadSolver::deltax(const double* x, double *dest)
+void JacobiPThreadSolver::deltax(const float* x, float *dest)
 {
     std::thread* workers = new std::thread[mnWorkers];
 
@@ -19,11 +15,11 @@ void JacobiPThreadSolver::deltax(const double* x, double *dest)
     delete [] workers;
 }
 
-void JacobiPThreadSolver::threadBody(int minI, int maxI, const double* x, double* dest)
+void JacobiPThreadSolver::threadBody(int minI, int maxI, const float* x, float* dest)
 {
     for (int i=minI; i < maxI; i++)
     {
-        double s = 0.f;
+        float s = 0.f;
         for (int j=0; j < i; j++)
             s+= mA[i][j]*x[j];
 
@@ -33,6 +29,6 @@ void JacobiPThreadSolver::threadBody(int minI, int maxI, const double* x, double
     }
 }
 
-JacobiPThreadSolver::JacobiPThreadSolver(const double **A, const double *b, int N, int nWorkers) : JacobiSolver(A, b, N), mnWorkers(nWorkers)
+JacobiPThreadSolver::JacobiPThreadSolver(const float **A, const float *b, int N, int nWorkers) : JacobiSolver(A, b, N), mnWorkers(nWorkers)
 {
 }

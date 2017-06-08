@@ -6,10 +6,10 @@
 class JacobiSequentialSolver : public JacobiSolver
 {
 public:
-    JacobiSequentialSolver(const double** A, const double* b, int N) : JacobiSolver(A, b, N) {}
+    JacobiSequentialSolver(const float** A, const float* b, int N) : JacobiSolver(A, b, N) {}
 
 private:
-    void deltax(const double *x, double *dest);
+    void deltax(const float *x, float *dest);
 };
 
 #endif //JACOBI_JACOBISEQUENTIALSOLVER_H

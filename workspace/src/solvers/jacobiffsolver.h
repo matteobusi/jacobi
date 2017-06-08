@@ -1,7 +1,3 @@
-//
-// Created by caos on 07/02/17.
-//
-
 #ifndef JACOBI_JACOBIFFSOLVER_H
 #define JACOBI_JACOBIFFSOLVER_H
 
@@ -14,13 +10,14 @@
 class JacobiFFSolver : public JacobiSolver
 {
 public:
-    JacobiFFSolver(const double** A, const double* b, int N, int nWorkers);
+    JacobiFFSolver(const float** A, const float* b, int N, int nWorkers, int grain);
     virtual ~JacobiFFSolver() {delete pf;}
 
 private:
     int mnWorkers;
+    int mGrain;
     ff::ParallelFor* pf;
-    void deltax(const double *x, double *dest);
+    void deltax(const float *x, float *dest);
     int getNWorkers() { return mnWorkers; };
 };
 #endif //JACOBI_JACOBIFFSOLVER_H

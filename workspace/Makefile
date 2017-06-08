@@ -18,4 +18,4 @@ offload: bin/jacobim
 
 .PHONY: clean
 clean:
-	rm -f bin/*
+	rm -f bin/* results/* graphs/*

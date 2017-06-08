@@ -47,21 +47,21 @@ do
     
     echo "Running fastflow"
     echo $HEADER  > $RES_FF_FILE
-    for i in 1 2 $(seq 4 $WORKER_STEPS $nw) $nw
+    for i in 1 2 $(seq 4 $WORKER_STEPS $[nw-1]) $nw
     do
 	echo -n "Working with $i ... "
 	if [[ "$1" == "MIC" ]]
 	then
-	    ssh mic1 "./jacobim $N $MAX_ITER $EPS f $i" >> $RES_FF_FILE
+	    ssh mic1 "./jacobim $N $MAX_ITER $EPS f $i 10" >> $RES_FF_FILE
 	else
-	    bin/jacobix $N $MAX_ITER $EPS f $i >> $RES_FF_FILE
+	    bin/jacobix $N $MAX_ITER $EPS f $i 10 >> $RES_FF_FILE
 	fi
 	echo "Done"
     done
 	     
     echo "Running pthread"
     echo $HEADER > $RES_PT_FILE
-    for i in 1 2 $(seq 4 $WORKER_STEPS $nw) $nw
+    for i in 1 2 $(seq 4 $WORKER_STEPS $[nw-1]) $nw
     do
 	echo -n "Working with $i ... "
         if [[ "$1" == "MIC" ]]

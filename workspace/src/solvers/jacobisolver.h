@@ -1,27 +1,30 @@
 #ifndef JACOBI_JACOBI_H
 #define JACOBI_JACOBI_H
 
+#include <chrono>
+#include <cstring>
+
 #include "jacobireport.h"
 
 class JacobiSolver
 {
 protected:
-    const double** mA;
-    const double* mb;
-    double* dx;
+    const float** mA;
+    const float* mb;
+    float* dx;
     int mN;
 
-    virtual void deltax(const double* x, double *dest) = 0;
-    virtual void update(double* x, const double* dx);
-    virtual bool convergenceCheck(int k, int maxIterations, double eps, const double* dx);
-    virtual double norm(const double *dx);
+    virtual void deltax(const float* x, float *dest) = 0;
+    virtual void update(float* x, const float* dx);
+    virtual bool convergenceCheck(int k, int maxIterations, float eps, const float* dx);
+    virtual float norm(const float *dx);
 
     virtual int getNWorkers() { return 1; }
 
 public:
-    JacobiSolver(const double** A, const double* b, int N) : mA(A), mb(b), mN(N) { dx = new double[mN]; };
+    JacobiSolver(const float** A, const float* b, int N) : mA(A), mb(b), mN(N) { dx = new float[mN]; };
     virtual ~JacobiSolver() { delete[] dx; }
-    JacobiReport solve(int maxIterations, double eps, double* x);
+    JacobiReport solve(int maxIterations, float eps, float* x);
 };
 
 

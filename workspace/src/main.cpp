@@ -16,46 +16,46 @@ enum COMPUTATION_METHOD
 };
 
 /* Helper functions */
-double randDouble(double min, double max)
+float randFloat(float min, float max)
 {
-    double v = ((double) rand()) / ((double) RAND_MAX);
+    float v = ((float) rand()) / ((float) RAND_MAX);
 
     return v*(max-min) + min;
 }
 
-void fillDiagDominantMatrix(double** A, int r, int c)
+void fillDiagDominantMatrix(float** A, int r, int c)
 {
     for (int i=0; i < r; i++)
     {
-        double sum = 0;
+        float sum = 0;
         for (int j = 0; j < c; j++)
             if (j!=i)
             {
-                double val = randDouble(-MAX, MAX);
+                float val = randFloat(-MAX, MAX);
                 sum += abs(val);
                 A[i][j] = val;
             }
 
         /* Change back A[i][i] to be > then sum(A[i][j]) */
-        A[i][i] = sum + randDouble(1, MAX+1);
+        A[i][i] = sum + randFloat(1, MAX+1);
     }
 }
 
-void fillKnownVector(double* b, int r)
+void fillKnownVector(float* b, int r)
 {
     for (int i=0; i < r; i++)
-        b[i] = randDouble(-MAX, MAX);
+        b[i] = randFloat(-MAX, MAX);
 }
 
-void fillInitialGuessVector(double* x, int r)
+void fillInitialGuessVector(float* x, int r)
 {
     for (int i=0; i < r; i++)
-        x[i] = randDouble(-MAX, MAX);
+        x[i] = randFloat(-MAX, MAX);
 }
 
 void usage(char* exec)
 {
-    cerr << "Usage: " << exec << " N ITER ERR METHOD [NWORKERS]" << endl;
+    cerr << "Usage: " << exec << " N ITER ERR METHOD [NWORKERS] [GRAIN]" << endl;
     cerr << "Where: " << endl;
     cerr << "N : is the size of the matrix A" << endl;
     cerr << "ITER : is the maximum number of iterations" << endl;
@@ -65,6 +65,7 @@ void usage(char* exec)
     cerr << "\tf : indicating that the FastFlow implementation must be used" << endl;
     cerr << "\tp : indicating that the PThread implementation must be used" << endl;
     cerr << "NWORKERS : the number of workers that should be used (ignored if METHOD is 's')" << endl;
+    cerr << "GRAIN : the grain of the computation (only if METHOD is 'f')" << endl;
     cerr << endl << "Produces a CSV line, in the form:" << endl;
     cerr << "\tN_WORKERS N_ITERATIONS COMP_TIME UPD_TIME CONV_TIME LATENCY ERROR" << endl;
 }
@@ -83,7 +84,7 @@ int main(int argc, char* argv[])
 
     int N = atoi(argv[1]);
     int MAX_ITERATIONS = atoi(argv[2]);
-    double EPS = atof(argv[3]);
+    float EPS = atof(argv[3]);
 
     COMPUTATION_METHOD method = SEQUENTIAL;
     switch (argv[4][0]) /* First char is enough */
@@ -97,19 +98,32 @@ int main(int argc, char* argv[])
     }
     
     int nworkers = 1;
+    int grain = 1;
 
-    if (method != SEQUENTIAL && argc > 5)
-        nworkers = atoi(argv[5]);
-    else if (method != SEQUENTIAL && argc < 6)
-    {
-        usage(argv[0]);
-        exit(-1);
-    }
+    if (method == PTHREAD)
+        if (argc < 6)
+        {
+            usage(argv[0]);
+            exit(-1);
+        }
+        else
+            nworkers = atoi(argv[5]);
+    else if (method == FASTFLOW)
+        if (argc < 7)
+        {
+            usage(argv[0]);
+            exit(-1);
+        }
+        else
+        {
+            nworkers = atoi(argv[5]);
+            grain = atoi(argv[6]);
+        }
 
     /* Generate a diagonal dominant matrix of the correct size, and the vectors of known terms and solution */
-    double** A = new double*[N];
-    double* b = new double[N];
-    double* x = new double[N];
+    float** A = new float*[N];
+    float* b = new float[N];
+    float* x = new float[N];
 
     if (A == NULL || b == NULL || x == NULL)
     {
@@ -119,7 +133,7 @@ int main(int argc, char* argv[])
 
     for (int i=0; i < N; i++)
     {
-        A[i] = new double[N];
+        A[i] = new float[N];
         if (A[i] == NULL)
         {
             cerr << "Error while allocating resources." << endl;
@@ -136,11 +150,11 @@ int main(int argc, char* argv[])
     JacobiSolver* js = NULL;
 
     if (method == SEQUENTIAL)
-        js = new JacobiSequentialSolver((const double**)A, (const double*)b, N);
+        js = new JacobiSequentialSolver((const float**)A, (const float*)b, N);
     else if (method == FASTFLOW)
-        js = new JacobiFFSolver((const double**)A, (const double*)b, N, nworkers);
+        js = new JacobiFFSolver((const float**)A, (const float*)b, N, nworkers, grain);
     else if (method == PTHREAD)
-        js = new JacobiPThreadSolver((const double**)A, (const double*)b, N, nworkers);
+        js = new JacobiPThreadSolver((const float**)A, (const float*)b, N, nworkers);
 
     /* Solve the problem */
     JacobiReport report = js->solve(MAX_ITERATIONS, EPS, x);

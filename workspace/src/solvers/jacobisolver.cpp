@@ -1,17 +1,9 @@
-//
-// Created by caos on 07/02/17.
-//
-
-#include <chrono>
-#include <cstring>
-
 #include "jacobisolver.h"
 
-JacobiReport JacobiSolver::solve(int maxIterations, double eps, double *x)
+JacobiReport JacobiSolver::solve(int maxIterations, float eps, float *x)
 {
     std::chrono::time_point<std::chrono::system_clock> start, end;  
     JacobiReport jr;
-
     int k = 0;
     bool conv = false;
 
@@ -22,23 +14,23 @@ JacobiReport JacobiSolver::solve(int maxIterations, double eps, double *x)
     while (!conv)
     {
         start = std::chrono::system_clock::now();
-        deltax((const double*)x, dx);
+        deltax((const float*)x, dx);
         end = std::chrono::system_clock::now();
 
-        jr.compTime += ((std::chrono::duration<double>)(end-start)).count();
+        jr.compTime += ((std::chrono::duration<float>)(end-start)).count();
 
         start = std::chrono::system_clock::now();
-        update(x, (const double*)dx);
+        update(x, (const float*) dx);
         end = std::chrono::system_clock::now();
 
-        jr.updateTime += ((std::chrono::duration<double>)(end-start)).count();
+        jr.updateTime += ((std::chrono::duration<float>)(end-start)).count();
         k++;
 
         start = std::chrono::system_clock::now();
-        conv = convergenceCheck(k, maxIterations, eps, (const double*)dx);
+        conv = convergenceCheck(k, maxIterations, eps, (const float*)dx);
         end = std::chrono::system_clock::now();
 
-        jr.convTime += ((std::chrono::duration<double>)(end-start)).count();
+        jr.convTime += ((std::chrono::duration<float>)(end-start)).count();
     }
 
     jr.error = norm(dx);
@@ -48,19 +40,19 @@ JacobiReport JacobiSolver::solve(int maxIterations, double eps, double *x)
     return jr;
 }
 
-void JacobiSolver::update(double *x, const double *dx)
+void JacobiSolver::update(float *x, const float *dx)
 {
-    memcpy(x, dx, sizeof(double)*mN);
+    memcpy(x, dx, sizeof(float)*mN);
 }
 
-bool JacobiSolver::convergenceCheck(int k, int maxIterations, double eps, const double *dx)
+bool JacobiSolver::convergenceCheck(int k, int maxIterations, float eps, const float *dx)
 {
     return (k >= maxIterations || norm(dx) <= eps);
 }
 
-double JacobiSolver::norm(const double *dx)
+float JacobiSolver::norm(const float *dx)
 {
-    double norm = 0.f;
+    float norm = 0.f;
     for (int i=0; i < mN; i++)
         norm += dx[i]*dx[i];// fabs(dx[i]);
 

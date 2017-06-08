@@ -1,22 +1,15 @@
-//
-// Created by caos on 07/02/17.
-//
-
 #include "jacobiffsolver.h"
 
-JacobiFFSolver::JacobiFFSolver(const double** A, const double* b, int N, int nWorkers) : JacobiSolver(A, b, N), mnWorkers(nWorkers)
+JacobiFFSolver::JacobiFFSolver(const float** A, const float* b, int N, int nWorkers, int grain) : JacobiSolver(A, b, N), mnWorkers(nWorkers), mGrain(grain)
 {
     pf = new ff::ParallelFor(mnWorkers, true, true);
 }
 
-void JacobiFFSolver::deltax(const double* x, double *dest)
+void JacobiFFSolver::deltax(const float* x, float *dest)
 {
-    // D^-1 ( b - Ax )
-    int grain = 10;
-
-    pf->parallel_for(0, mN, 1, grain, [&](const long i)
+    pf->parallel_for(0, mN, 1, mGrain, [&](const long i)
     {
-        double s = 0.f;
+        float s = 0.f;
         for (int j=0; j < i; j++)
             s+= mA[i][j]*x[j];
 

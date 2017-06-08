@@ -1,11 +1,11 @@
 #include "jacobisequentialsolver.h"
 
-void JacobiSequentialSolver::deltax(const double* x, double *dest)
+void JacobiSequentialSolver::deltax(const float* x, float *dest)
 {
     // D^-1 ( b - Ax )
     for (int i=0; i < mN; i++)
     {
-        double s = 0.f;
+        float s = 0.f;
         for (int j=0; j < i; j++)
             s+= mA[i][j]*x[j];
 
