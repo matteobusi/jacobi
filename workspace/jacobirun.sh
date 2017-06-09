@@ -60,11 +60,11 @@ do
     done
 	     
     echo "Running thread"
-    echo $HEADER > $RES_PT_FILE
+    echo $HEADER > $RES_TH_FILE
     for i in 1 2 $(seq 4 $WORKER_STEPS $[nw-1]) $nw
     do
 	echo -n "Working with $i ... "
-        if [[ "$1" == "MIC" ]]
+    if [[ "$1" == "MIC" ]]
 	then
 	    ssh mic1 "./jacobim $N $MAX_ITER $EPS t $i" >> $RES_TH_FILE
 	else

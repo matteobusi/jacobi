@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
+import matplotlib.ticker as plticker
+
 
 import numpy as np
 import seaborn as sns
@@ -7,7 +8,9 @@ import pandas as pd
 
 sns.set()
 sns.set(style="whitegrid")
-sns.set_context("paper")
+plt.rc('text', usetex=True)
+plt.rc('font', family='Times-Roman')
+color = sns.color_palette("Set2", 10)
 
 for p in ["host", "mic"]:
     for m in ["ff", "th"]:
@@ -35,18 +38,13 @@ for p in ["host", "mic"]:
         # Add ideal values for efficiency, scalability and speedup to the dataframe
         for nw in compl_m['nw'].unique():
             nRow = pd.DataFrame([["ideal", nw, nw, nw, 1.0]],columns=['N', 'nw','s','scalab', 'eff'])
-            compl_m = compl_m.append(nRow)    
+            compl_m = compl_m.append(nRow, ignore_index = True)
 
         maxW = compl_m['nw'].max()
-    
-        fig, axs = plt.subplots(ncols=3, figsize=(11.7*4, 8.27))
-        sns.factorplot(x='nw', y='s', data=compl_m, hue='N',  ax=axs[0])
-        sns.factorplot(x='nw', y='scalab', data=compl_m, hue='N', ax=axs[1])
-        sns.factorplot(x='nw', y='eff', data=compl_m, hue='N',  ax=axs[2])
-    
-        axs[0].set(ylabel="Speedup", xlabel="# Workers")
-        axs[1].set(ylabel="Scalability", xlabel="# Workers")
-        axs[2].set(ylabel="Efficiency", xlabel="# Workers")
 
-        
-        fig.savefig("graphs/graph_" + m + "_" + p + ".png")
+        g = sns.PairGrid(compl_m, hue='N', size=8, aspect=1.6, x_vars=['nw'], y_vars=['s', 'scalab', 'eff'], hue_kws={"marker": ["o", "s", "D", "^", "+"]})
+        g.map(plt.scatter) #, "nw", "s", ax=axs[0])
+        g.map(plt.plot) #, 'nw', 's', ax=axs[0])
+        g.add_legend()
+
+        plt.savefig("graphs/graph_" + m + "_" + p + ".png")
