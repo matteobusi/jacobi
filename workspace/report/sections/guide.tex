@@ -1,4 +1,4 @@
-This section provides a short guide on how to use the program, how to conduct experiments and how to gather results.
+This section provides a short guide on how to use the program, how to conduct the experiments, and how to gather the results.
 
 \subsection{Workspace}
 The workspace content is organized as follows:
@@ -45,18 +45,9 @@ Produces a CSV line, in the form:
 N_WORKERS, N_ITERATIONS, COMP_TIME, UPD_TIME, CONV_TIME, LATENCY, ERROR
 \end{lstlisting}
 
-\subsection{Experiments and analysis}
+\subsection{Experiments and analysis}\label{subsec:runningexperiments}
 After compilation, to execute the experiments and analyse the results one must:
 \begin{enumerate}
 	\item run \verb|./jacobirun.sh| or \verb|./jacobirun.sh MIC| (if Xeon Phi must be used), 
 	\item run \verb|reportgen.py| to produce graphs.
 \end{enumerate}
-
-
-
-
-
-
-
-
-

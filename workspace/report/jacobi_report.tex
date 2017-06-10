@@ -19,6 +19,8 @@
 \newcommand{\HRuleL}{\rule{1.1\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
 
 \usepackage{listings}
+\usepackage[]{algorithm2e}
+
 
 \definecolor{listinggray}{gray}{0.9}
 \definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
@@ -31,6 +33,8 @@
 	tabsize=4,
 	captionpos=b,
 }
+
+\newcommand{\alert}[1]{{\color{red}#1}}
 
 \begin{document}
 	
@@ -107,11 +111,7 @@
 		\input{sections/implementation}
 			
 	\section{Experiments} \label{sec:experiments}
-		\subsection{Methodology} \label{subsec:methodology}
-			\input{sections/methodology}
-			
-		\subsection{Results} \label{subsec:results}
-			\input{sections/results}
+		\input{sections/experiments}
 	
 	\section{User guide} \label{sec:guide}
 		\input{sections/guide}

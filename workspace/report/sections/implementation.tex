@@ -1,0 +1,12 @@
+As already told in Section~\ref{sec:intro} the actual implementation of the project consists in three different variants of the Jacobi iterative method, following the ideas in Section~\ref{sec:design}.
+The first variant is the sequential one, a direct rewriting of the algorithm in Figure~\ref{alg:sequantialjacobi}, the second variant implements the algorithm sketched in sub-section~\ref{subsec:par} using the \verb|ParallelFor| provided by \verb|FastFlow| library, and the third variant implements the same parallel algorithm using \verb|C++11| threads.
+More precisely:
+\begin{itemize}
+	\item The main function in file \verb|main.cpp|, that implements the parameter parsing, I/O and initialization.
+	\item The class \verb|JacobiReport| that collects statistics about the execution of the algorithm.
+	\item The class \verb|JacobiSolver| that implements, together with class \verb|JacobiS|\\ \verb|equentialSolver|, \verb|JacobiFFSolver|, and \verb|JacobiThreadSolver|, a template method pattern~\cite{}.
+	The class provides a method \verb|solve| that, given a linear system, produces a \verb|JacobiReport|.
+	\item Classes \verb|JacobiSequentialSolver|, \verb|JacobiFFSolver|, and \verb|JacobiThre|\\ \verb|adSolver| implement said algorithms by redefining the method \verb|deltax| that computes the new approximation of the solution.
+\end{itemize}
+
+During the development we paid particular attention to vectorization, ensuring that the compiler could vectorize most of the code, and to minimization of overhead in method \verb|deltax| trying to remove unneeded memory allocations and initializations (with the exception of \verb|JacobiThreadSolver::del|\\ \verb|tax| which has been kept as simple as possible).
