@@ -4,7 +4,8 @@
 MAX_ITER=100
 EPS=0.001
 N_VALS=(5000 10000 15000 30000)
-HEADER="nw,it,upd_t,conv_t,sb_t,latency,error"
+HEADER="nw,it,upd_t,conv_t,latency,error"
+PMIC=mic0
 
 # WORKERS SETTINGS
 if [[ "$1" == "MIC" ]]
@@ -39,7 +40,7 @@ do
     echo $HEADER  > $RES_SEQ_FILE
     if [[ "$1" == "MIC" ]]
     then
-	ssh mic1 "./jacobim $N $MAX_ITER $EPS s" >> $RES_SEQ_FILE
+	ssh $PMIC "./jacobim $N $MAX_ITER $EPS s" >> $RES_SEQ_FILE
     else
 	bin/jacobix $N $MAX_ITER $EPS s >> $RES_SEQ_FILE
     fi
@@ -52,7 +53,7 @@ do
 	echo -n "Working with $i ... "
 	if [[ "$1" == "MIC" ]]
 	then
-	    ssh mic1 "./jacobim $N $MAX_ITER $EPS f $i 10" >> $RES_FF_FILE
+	    ssh $PMIC "./jacobim $N $MAX_ITER $EPS f $i 10" >> $RES_FF_FILE
 	else
 	    bin/jacobix $N $MAX_ITER $EPS f $i 10 >> $RES_FF_FILE
 	fi
@@ -66,7 +67,7 @@ do
 	echo -n "Working with $i ... "
     if [[ "$1" == "MIC" ]]
 	then
-	    ssh mic1 "./jacobim $N $MAX_ITER $EPS t $i" >> $RES_TH_FILE
+	    ssh $PMIC "./jacobim $N $MAX_ITER $EPS t $i" >> $RES_TH_FILE
 	else
 	    bin/jacobix $N $MAX_ITER $EPS t $i >> $RES_TH_FILE
         fi

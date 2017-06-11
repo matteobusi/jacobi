@@ -37,14 +37,12 @@ for p in ["host", "mic"]:
             df_m['s'] = df_m.apply(lambda row: seq_time/row['latency'], axis=1)
             df_m['scalab'] = df_m.apply(lambda row: m_time_0/row['latency'], axis=1)
             df_m['eff'] = df_m.apply(lambda row: row['s']/row['nw'], axis=1)
-            
-            df_m['ratio'] =  df_m.apply(lambda row: row['sb_t']/row['latency'], axis=1)
 
             compl_seq = compl_seq.append(df_seq, ignore_index=True)
             compl_m = compl_m.append(df_m, ignore_index=True)
 
             df_1 = df_m[ df_m['nw'] == 1 ][['N', 'latency']]
-            df_best = df_m[ df_m['latency'] == df_m['latency'].min() ][['N', 'nw', 'latency', 'sb_t', 'ratio']]
+            df_best = df_m[ df_m['latency'] == df_m['latency'].min() ][['N', 'nw', 'latency']]
             df_best['latency_1'] = df_best.apply(lambda row: df_1[df_1['N'] == row['N']]['latency'], axis=1)
             df_best['latency_seq'] = df_best.apply(lambda row: seq_time, axis=1)
             df_min = df_min.append(df_best, ignore_index=True)
