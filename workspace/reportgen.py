@@ -8,8 +8,12 @@ import pandas as pd
 
 sns.set()
 sns.set(style="whitegrid")
+sns.set(font_scale=2) 
 plt.rc('text', usetex=True)
-plt.rc('font', family='Times-Roman')
+font = {'family' : 'Times-Roman',
+        'size'   : 22}
+
+plt.rc('font', **font)
 color = sns.color_palette("Set2", 10)
 
 for p in ["host", "mic"]:
@@ -42,9 +46,13 @@ for p in ["host", "mic"]:
 
         maxW = compl_m['nw'].max()
 
-        g = sns.PairGrid(compl_m, hue='N', size=8, aspect=1.6, x_vars=['nw'], y_vars=['s', 'scalab', 'eff'], hue_kws={"marker": ["o", "s", "D", "^", "+"]})
-        g.map(plt.scatter) #, "nw", "s", ax=axs[0])
-        g.map(plt.plot) #, 'nw', 's', ax=axs[0])
-        g.add_legend()
+        for (em, lbl) in [('s', 'Speedup'), ('scalab', 'Scalability'), ('eff', 'Efficiency')]:
+            g = sns.FacetGrid(compl_m, hue='N', aspect=1.6, size=11)
+            g.map(plt.scatter, 'nw', em)
+            g.map(plt.plot, 'nw', em)
+            g.add_legend()
+            g.set_xlabels("# Workers")
+            g.set_ylabels(lbl)
+            plt.savefig("graphs/graph_" + m + "_" + p + "_" + em + ".png")
 
-        plt.savefig("graphs/graph_" + m + "_" + p + ".png")
+        # Compute the table and put into a file.
