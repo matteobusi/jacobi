@@ -1,16 +1,22 @@
-\documentclass[11pt,a4paper,oneside,titlepage]{article}
+\documentclass[12pt, oneside, a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage{minitoc}
+%\usepackage{minitoc}
 \usepackage{xcolor, textcomp}
 \usepackage{siunitx}
+\usepackage{subcaption}
+\usepackage{geometry}
 
-\usepackage{tikz}
-\usetikzlibrary{trees}
-
+\geometry{
+	left=2.5cm,
+	right=2.5cm
+}
+%
+%\usepackage{tikz}
+%\usetikzlibrary{trees}
 
 \author{Matteo Busi}
 \title{SPM Final Project Report}
@@ -33,10 +39,11 @@
 	tabsize=4,
 	captionpos=b,
 }
-
+\usepackage{booktabs}
 \newcommand{\alert}[1]{{\color{red}#1}}
 
 \begin{document}
+	\RestyleAlgo{boxruled}
 	
 	\begin{titlepage}
 				
@@ -112,11 +119,12 @@
 			
 	\section{Experiments} \label{sec:experiments}
 		\input{sections/experiments}
+
+	\section{Conclusions} \label{sec:conclusions}
+		\input{sections/conclusions}
 	
 	\section{User guide} \label{sec:guide}
 		\input{sections/guide}
-	
-%	\section{Conclusion} \label{sec:conclusions}
-%		\input{sections/conclusions}
+
 	\bibliography{references}
 \end{document}

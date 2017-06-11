@@ -1,12 +1,15 @@
-As already told in Section~\ref{sec:intro} the actual implementation of the project consists in three different variants of the Jacobi iterative method, following the ideas in Section~\ref{sec:design}.
-The first variant is the sequential one, a direct rewriting of the algorithm in Figure~\ref{alg:sequantialjacobi}, the second variant implements the algorithm sketched in sub-section~\ref{subsec:par} using the \verb|ParallelFor| provided by \verb|FastFlow| library, and the third variant implements the same parallel algorithm using \verb|C++11| threads.
-More precisely:
+The actual implementation consists in three different variants of the Jacobi iterative method, following the ideas in Section~\ref{sec:design}.
+
+The source code is organized as follows:
 \begin{itemize}
-	\item The main function in file \verb|main.cpp|, that implements the parameter parsing, I/O and initialization.
-	\item The class \verb|JacobiReport| that collects statistics about the execution of the algorithm.
-	\item The class \verb|JacobiSolver| that implements, together with class \verb|JacobiS|\\ \verb|equentialSolver|, \verb|JacobiFFSolver|, and \verb|JacobiThreadSolver|, a template method pattern~\cite{}.
-	The class provides a method \verb|solve| that, given a linear system, produces a \verb|JacobiReport|.
-	\item Classes \verb|JacobiSequentialSolver|, \verb|JacobiFFSolver|, and \verb|JacobiThre|\\ \verb|adSolver| implement said algorithms by redefining the method \verb|deltax| that computes the new approximation of the solution.
+	\item The main function, in file \verb|main.cpp|, implements the parameter parsing, I/O and initialization.
+	\item The class \verb|JacobiReport| collects statistics about the execution of the algorithm.
+	\item The class \verb|JacobiSolver| that implements, together with class \verb|JacobiSequentialSolver|, \verb|JacobiFFSolver|, and \verb|JacobiThreadSolver| a template method pattern.
+	Each of the concrete sub-classes implement a \verb|deltax| method specifying how the new approximation of the solution $x$ to the system is computed.
+	\item Class \verb|JacobiSequentialSolver| implements \verb|deltax| exactly as in Algorithm~\ref{alg:sequantialjacobi}
+	\item Class \verb|JacobiFFSolver| implements \verb|deltax| using the \verb|parallel_for| building block from FastFlow library; \verb|parallel_for| automatically parallelizes the given loop.
+	\item Class \verb|JacobiThreadSolver| implements \verb|deltax| using C++ threads. The implementation is na\"ive, meaning that the threads are re-created at each method invocation (i.e.\ $T_{setup}$ may become non negligible)  and the collector is a simple barrier implemented using \verb|join| method from \verb|thread| class.
 \end{itemize}
 
-During the development we paid particular attention to vectorization, ensuring that the compiler could vectorize most of the code, and to minimization of overhead in method \verb|deltax| trying to remove unneeded memory allocations and initializations (with the exception of \verb|JacobiThreadSolver::del|\\ \verb|tax| which has been kept as simple as possible).
+Please note that, the code of each \verb|deltax| (and also other methods) have been made vectorizable using the feedback provided by the compiler.
+Specifically the \verb|if| construct present in the inner-loop in the algorithms above have been removed and the loop have been split in two parts, i.e.\ the first part in range $[0, i)$ and the second $[i+1, N)$ (or  $[i+1, M)$ in case of parallel implementation).

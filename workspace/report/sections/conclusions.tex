@@ -1,0 +1,14 @@
+Summing up the data let us to conclude that:
+\begin{itemize}
+	\item The time spent in setting up the workers and in the barrier are not always negligible, especially for bigger $N$s
+	\item On the other hand the ratio of time spent in setup increases as $w$ increases with small $N$s 
+	\item Huge systems may not perform well since cache coherence procedures may spend non negligible time in moving data (i.e. incrementing the time for updating)
+	\item Moreover small workloads in combination with \emph{vectorization} --- which dramatically improves the computation time increasing --- increase, again, the setup/barrier time fraction.
+\end{itemize}
+
+So, decent performances were achieved but to have better metrics one should, for example:
+\begin{itemize}
+	\item Optimize the code to work better on a specific architecture
+	\item removing unnecessary memory allocations or use better allocators
+	\item reduce idle time of each worker by giving a more evenly distributed workload
+\end{itemize} 

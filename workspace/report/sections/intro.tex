@@ -2,13 +2,14 @@ The aim of this project was to produce a program to solve linear systems using t
 
 Three different implementations are proposed here:
 \begin{description}
-    \item[Sequential implementation] the sequential implementation provides a \\    
-    vanilla implementation of the Jacobi method,
-    \item[Thread implementation] is a na\"ive implementation of the algorithm using \lstinline+thread+s from \lstinline|C++11| standard,  
+    \item[Sequential implementation] the sequential implementation provides a sequential implementation of the Jacobi method,
+    \item[Thread implementation] is an implementation of the algorithm using \lstinline+thread+s from C++11,  
     \item[FastFlow implementation] is an implementation using the \lstinline+parallelFor+ from FastFlow library.
 \end{description}
 
 Tests were conducted on a machine using a \emph{Intel Xeon E2650} CPU ($8$ cores clocked at $2$~\si{\giga\hertz} each with $2$ contexts) and a \emph{Intel Xeon Phi} co-processor ($60$ cores clocked at $1$~\si{\giga\hertz} each with $4$ contexts).
+For each test (i.e.\ for each different implementation and for different linear system sizes) we collected the latency and for parallel versions also computed speedup, the scalability, the efficiency, and the ``best configuration'' to minimize latency.
+We also produced some graphs to compare expected results against empirical ones.
 
 \paragraph{Summary.} The next section discusses the details of program design, including an analysis of the expected performance of the sequential and parallel implementations.
 Section~\ref{sec:implementation} reports some details about the implementation, discussing the classes design, their methods, and some optimization.

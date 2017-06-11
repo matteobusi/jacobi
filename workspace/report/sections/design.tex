@@ -1,57 +1,84 @@
-In this section the basic Jacobi algorithm is introduced.
-Then a brief account on design choices, driven by the performance model, is given along with a sketch of the parallel algorithm.
+Here we first introduce the sequential version of the Jacobi iterative algorithm.
+We then explain how to adapt the algorithm for vectorization and parallelization.
+We also provide an performance model, to justify parallelization and design choices.
 
 \subsection{Sequential algorithm and performance}\label{subsec:seq}
-Figure~\ref{alg:sequantialjacobi} shows the pseudo-code for the Jacobi iterative method as presented in the numerical computing literature~\cite{}.
-\begin{figure}[h]
-	\begin{center}
-	\begin{algorithm}[H]
-		\KwData{A linear system in the form of $Ax = b$ with $N \times N$ the size of $A$, a maximum accepted error $\varepsilon$, and a maximum number of iterations $K$.}
-		\KwResult{An approximated solution $x^{(k)}$ s.t. $||b - Ax^{(k)}||^{2}_2 \leq \varepsilon$ or $k \ge K$.}
-		\BlankLine
-		$x^{(0)} \leftarrow $ initial guess for the solution\\
-		$k \leftarrow 0$\\
-		\While {$||b - Ax^{(k)}||^{2}_2 \ge \varepsilon$ and $k \leq K$}
-		{
-			\For{$i\leftarrow 0$ \KwTo $N$}{
-				$\sigma \leftarrow 0$\\
-				\For{$j\leftarrow 0$ \KwTo $N$}{
-					\If{$j \neq i$}{
-						$\sigma$ $\leftarrow$ $\sigma + a_{ij}x^{(k)}_j$
-					}
-				}
-				$x^{(k+1)}_i \leftarrow \frac{b_i - \sigma}{a_{ii}}$\\
-			}
-			$k \leftarrow k + 1$\\
-		}
-	\end{algorithm}
-	\end{center}
-	\caption{Pseudo-code for the sequential Jacobi iterative method.}
-	\label{alg:sequantialjacobi}
-\end{figure}
+In the numerical computing literature the Jacobi iterative method is presented as particular iterative method and the corresponding pseudo-code is usually similar to the one in Algorithm~\ref{alg:sequantialjacobi}.
 
-It is pretty evident that the completion time $T_C$ for a program using this procedure could be computed as:
+Supposing that a program implementing the algorithm takes $T_{jacobi}(n)$ time to compute the result (i.e.\ the latency), then the completion time $T_C$ of an hypothetical program is
 \[
-	T_C = T_{alloc}(n) + T_{fill}(n) + T_{jacobi}(n)
+	T_C \approx T_{alloc}(n) + T_{fill}(n) + T_{jacobi}(n)
 \]
 
-where $T_{alloc}(n)$ and $T_{fill}(n)$ are, respectively, the time needed do allocate and fill the memory to store the input data, and $T_{jacobi}(n)$ is the time to solve the system using the algorithm in Figure~\ref{alg:sequantialjacobi} (i.e.\ the latency).
+where $T_{alloc}(n)$ and $T_{fill}(n)$ are, respectively, the time needed do allocate and fill the memory to store the input data.
 
 Further expanding $T_{jacobi}$ we get:
 \[
-	T_{jacobi}(n) = k \cdot (T_{conv}(n) + T_{comp}(n) + T_{upd}(n))
+	T_{jacobi}(n) \approx k \cdot (T_{conv}(n) + T_{comp}(n) + T_{upd}(n))
 \]
-where $T_{conv}(n)$ is the time needed to check convergence, $T_{comp}(n)$ is the time needed to compute the new approximation of the solution, and $T_{upd}(n)$ is the time needed to update the solution vector.
+where $k$ is the number of iterations, $T_{conv}(n)$ is the time needed to check convergence, $T_{comp}(n)$ is the time needed to compute the new approximation of the solution, and $T_{upd}(n)$ is the time needed to update the solution vector.
 
-Basic complexity theory allow us to conclude that $T_{conv}(n)$ and $T_{upd}(n)$ have linear complexity and $T_{comp}(n)$'s complexity is quadratic.
-It is worth, then, to parallelize the computation corresponding to time $T_{comp}(n)$ (i.e.\ the computation of the new value of $x$).
+\begin{algorithm}[ht]
+	\vspace{1em}
+	\KwData{A linear system in the form of $Ax = b$ with $N \times N$ the size of $A$, a maximum accepted error $\varepsilon$, and a maximum number of iterations $K$.}
+	\KwResult{An approximated solution $x^{(k)}$ s.t. $||b - Ax^{(k)}||^{2}_2 \leq \varepsilon$ or $k \ge K$.}
+	\BlankLine			
+	$x^{(0)} \leftarrow $ initial guess for the solution\\
+	$k \leftarrow 0$\\
+	\While {$||b - Ax^{(k)}||^{2}_2 \ge \varepsilon$ and $k \leq K$}
+	{
+		\For{$i\leftarrow 0$ \KwTo $N$}{
+			$\sigma \leftarrow 0$\\
+			\For{$j\leftarrow 0$ \KwTo $N$}{
+				\If{$j \neq i$}{
+					$\sigma$ $\leftarrow$ $\sigma + a_{ij}x^{(k)}_j$
+				}
+			}
+			$x^{(k+1)}_i \leftarrow \frac{b_i - \sigma}{a_{ii}}$\\
+		}
+		$k \leftarrow k + 1$\\
+	}
+\caption{Pseudo-code for the sequential Jacobi iterative method.}
+\label{alg:sequantialjacobi}
+\end{algorithm}
+
 
 \subsection{Parallel algorithm and performance}\label{subsec:par}
-Observations of the previous sub-section let us to design a worker.
-The idea is to split the matrix $A$ in rows of the same size and to feed said rows to the worker.
+Given the performance model of the previous sub-section to better parallelize the algorithm we may consider to minimize those $T_{conv}(n)$, $T_{comp}(n)$ , and $T_{upd}(n)$ but:
+\begin{itemize}
+	\item $T_{conv}(n)$ and $T_{upd}(n)$ corresponds to computations with linear time complexity
+	\item $ T_{comp}(n)$ corresponds to a computation with quadratic time complexity
+\end{itemize}
+Hence we will consider only consider $T_{conv}(n)$ and $T_{upd}(n)$ as negligible, and proceed by parallelizing only of the last computation (always assuring that vectorization of each of the three computations takes place, see Section~\ref{sec:implementation}).
 
-The performance model depends also on the number of workers, $w$, and $ T_{jacobi}(n, w)$ can be expanded --- ignoring $T_{conv}(n)$ and $T_{upd}(n)$ --- as:
+More specifically given the system matrix $A$ with size $N\times N$ and having $w$ workers:
+\begin{enumerate}
+	\item First, an emitter should divide $A$ into sub-matrices each with about $~ N/w$ rows, delivering it to each worker,
+	\item then, each worker should compute its part of the solution using the provided sub-matrix as described in the pseudo-code of Algorithm~\ref{alg:paralgo},
+	\item finally a collector should recompose the solution
+\end{enumerate}
+
+\begin{algorithm}[ht]
+\vspace{1em}
+\KwData{A sub-matrix $A_s$ of $A$ with $M$ rows and $N$ columns, the previous approximation $x^{(k)}$.}
+\KwResult{The next approximation of the solution.}
+\BlankLine
+\For{$i\leftarrow 0$ \KwTo $M$}{
+	$\sigma \leftarrow 0$\\
+	\For{$j\leftarrow 0$ \KwTo $N$}{
+		\If{$j \neq i$}{
+			$\sigma$ $\leftarrow$ $\sigma + a_{ij}x^{(k)}_j$
+		}
+	}
+	$x^{(k+1)}_i \leftarrow \frac{b_i - \sigma}{a_{ii}}$\\
+}
+\caption{Pseudo-code for the worker}
+\label{alg:paralgo}
+\end{algorithm}
+
+
+As evident from Algorithm~\ref{alg:paralgo} the performance model now also depends on $w$, so the latency, $T_{jacobi}(n, w)$, can be expanded --- ignoring $T_{conv}(n)$ and $T_{upd}(n)$ --- as:
 \[
-	 T_{jacobi}(n, w) = T_{setup} (n, w) + T_{barrier} (n, w) + \frac{k}{w} \cdot T_{comp}(n)
+	 T_{jacobi}(n, w) \approx T_{setup} (n, w) + k\cdot T_{barrier} (n, w) + \frac{k}{w} \cdot T_{comp}(n)
 \]
-where $T_{setup} (n, w)$ is the time required to setup the $w$ workers, $T_{barrier} (n, w)$ is the total time spent by threads waiting each other and $\frac{k}{w} \cdot T_{comp}(n)$ is the ideal time needed to $w$ workers to compute the new value of the approximation of the solution.
+where $T_{setup} (n, w)$ is the time required to setup the $w$ workers and assign them the work (i.e.\ the time needed to the emitter), $T_{barrier} (n, w)$ is the total time spent by the collector and $\frac{k}{w} \cdot T_{comp}(n)$ is the ideal time needed to $w$ workers to compute the new value of the approximation of the solution.
