@@ -13,6 +13,7 @@ protected:
     const float* mb;
     float* dx;
     int mN;
+    JacobiReport jr;
 
     virtual void deltax(const float* x, float *dest) = 0;
     virtual void update(float* x, const float* dx);

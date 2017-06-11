@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include <ff/parallel_for.hpp>
+#include <chrono>
 
 #include "jacobisolver.h"
 

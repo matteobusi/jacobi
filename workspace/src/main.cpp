@@ -67,7 +67,17 @@ void usage(char* exec)
     cerr << "NWORKERS : the number of workers that should be used (ignored if METHOD is 's')" << endl;
     cerr << "GRAIN : the grain of the computation (only if METHOD is 'f')" << endl;
     cerr << endl << "Produces a CSV line, in the form:" << endl;
-    cerr << "\tN_WORKERS N_ITERATIONS COMP_TIME UPD_TIME CONV_TIME LATENCY ERROR" << endl;
+    cerr << "\tN_WORKERS, N_ITERATIONS, COMP_TIME, UPD_TIME, CONV_TIME, SETUP_AND_BARRIER_TIME, LATENCY, ERROR" << endl;
+    cerr << "Where:" << endl;
+    cerr << "N_WORKERS : is the number of workers used" << endl;
+    cerr << "N_ITERATIONS : is the effective number of iterations performed" << endl;
+    cerr << "COMP_TIME : is the total time spent in computation of the new approximation" << endl;
+    cerr << "UPD_TIME : is the total time spent in updating the solution vector" << endl;
+    cerr << "CONV_TIME : is the total time spent in convergence checks" << endl;
+    cerr << "SETUP_AND_BARRIER_TIME : is the total time spent setting up threads and in barrier (computed only if METHOD is 't')" << endl;
+    cerr << "LATENCY : is the latency" << endl;
+    cerr << "ERROR : is norm of the error" << endl;
+
 }
 
 int main(int argc, char* argv[])

@@ -4,7 +4,7 @@
 MAX_ITER=100
 EPS=0.001
 N_VALS=(5000 10000 15000 30000)
-HEADER="nw,it,comp_t,upd_t,conv_t,latency,error"
+HEADER="nw,it,comp_t,upd_t,conv_t,sb_t,latency,error"
 
 # WORKERS SETTINGS
 if [[ "$1" == "MIC" ]]

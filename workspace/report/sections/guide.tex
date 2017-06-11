@@ -29,20 +29,29 @@ Executable \verb|jacobix| runs on the Xeon CPU, while executable \verb|jacobim| 
 
 Executing one of the executable without arguments produces as output a guide that should be self-explaining:
 \begin{lstlisting}
-Usage: ./jacobi N ITER ERR METHOD [NWORKERS] [GRAIN]
+Usage: bin/jacobix N ITER ERR METHOD [NWORKERS] [GRAIN]
 Where: 
-	N : is the size of the matrix A
-	ITER : is the maximum number of iterations
-	ERR : is the maximum norm of an acceptable error
-	METHOD: is either
-		s : indicating that the sequential implementation must be used
-		f : indicating that the FastFlow implementation must be used
-		t : indicating that the Thread implementation must be used
-	NWORKERS : the number of workers that should be used (ignored if METHOD is 's')
-	GRAIN : the grain of the computation (only if METHOD is 'f')
+N : is the size of the matrix A
+ITER : is the maximum number of iterations
+ERR : is the maximum norm of an acceptable error
+METHOD: is either
+	s : indicating that the sequential implementation must be used
+	f : indicating that the FastFlow implementation must be used
+	t : indicating that the Thread implementation must be used
+NWORKERS : the number of workers that should be used (ignored if METHOD is 's')
+GRAIN : the grain of the computation (only if METHOD is 'f')
 
 Produces a CSV line, in the form:
-N_WORKERS, N_ITERATIONS, COMP_TIME, UPD_TIME, CONV_TIME, LATENCY, ERROR
+	N_WORKERS, N_ITERATIONS, COMP_TIME, UPD_TIME, CONV_TIME, SETUP_AND_BARRIER_TIME, LATENCY, ERROR
+Where:
+N_WORKERS : is the number of workers used
+N_ITERATIONS : is the effective number of iterations performed
+COMP_TIME : is the total time spent in computation of the new approximation
+UPD_TIME : is the total time spent in updating the solution vector
+CONV_TIME : is the total time spent in convergence checks
+SETUP_AND_BARRIER_TIME : is the total time spent setting up threads and in barrier (computed only if METHOD is 't')
+LATENCY : is the latency
+ERROR : is norm of the error
 \end{lstlisting}
 
 \subsection{Experiments and analysis}\label{subsec:runningexperiments}

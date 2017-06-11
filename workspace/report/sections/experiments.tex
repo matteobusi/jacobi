@@ -2,7 +2,33 @@ This section summarizes how the experiments were conducted and their results.
 
 \subsection{Methodology} \label{subsec:methodology}
 Experiments were performed using the script \verb|jacobirun.sh|, as better explained in sub-section~\ref{subsec:runningexperiments}.
-Specifically each variant of the program (i.e.\ sequential, thread and FastFlow versions) were run both on Xeon CPU and Xeon Phi co-processor for four different system sizes $N$, i.e.\ $5000$, $10000$, $15000$, and $30000$.
+Specifically each variant of the program (i.e.\ sequential, thread and FastFlow versions) were run both on Xeon CPU (with number of workers between $1$ and $16$) and Xeon Phi co-processor (with number of workers between $1$ and $240$) for four different system sizes $N$, i.e.\ $5000$, $10000$, $15000$, and $30000$.
 Bigger $N$s filled up the memory of the co-processor, hence were not included in the analysis.
+All the tests of the \verb|FastFlow| implementation use a grain size of $10$.
 
-\subsection{Results} \label{subsec:results}
+\subsection{Results and remarks} \label{subsec:results}
+Figure~\ref{fig:ff} and Figure~\ref{fig:thread}, available in bigger format in the appendix, report the experimental results of the two parallel implementations.
+In particular Figure~\ref{fig:ff} reports the results of the \verb|ParallelFor| implementation: on the left the results refer to an execution on the Xeon CPU while on the right the results are for the Xeon Phi.
+While Figure~\ref{fig:thread} shows the results of the implementation using \verb|C++11| threads both for the Xeon CPU and the Xeon Phi co-processor.
+\alert{inserire qui i grafici}
+
+In both parallel implementations it is evident that curves of efficiency, speedup, and scalability are less than optimal --- expected performances have been outlined in Section~\ref{sec:design}.
+
+The explanation resides in the following facts (extracted from the measures produced for \verb|C++11| implementation):
+\begin{itemize}
+	\item The time spent in setting up the workers and in the barrier are not negligible, as assumed above.
+	\item Smaller system size $N$ leads to a bigger fraction of time spent in setting up threads.
+	\item The same happens for bigger number of workers, as the fraction of time spent in setting up and orchestrating threads increases w.r.t.\ to the fraction of time spent in computation.
+	\item Moreover small workloads in combination with \emph{vectorization} --- which effectively improves the computation time increasing --- increase, again, the setup/barrier time fraction.
+\end{itemize}
+
+The above affirmations are supported by Table~\ref{tab:ffthread}, which shows results regarding the best configuration in terms of latency for each size $N$, processor, and implementation.
+For each ``best configuration'' of \verb|C++11| thread implementation an extra column shows the ratio between setup/barrier time and computing time (i.e.\ $\frac{T_{barrier} + T_{setup}}{T_{comp}}$) (full data is available in folder \verb|results| as \verb|csv| file, as explained in Section~\ref{sec:guide}).
+
+Finally can be observed that:
+\begin{itemize}
+	\item None of the best configurations are for very small or very big number of workers.
+	\item Increasing the $N$ leads to better results, but huge systems may not perform well (i.e. $N > 30000$) since cache coherence procedures may spend non negligible time in moving data (i.e. incrementing the time for updating).
+	\item The extra column shows that the ration of time spent in setup/barrier decreases as $N$ increases.
+\end{itemize}
+

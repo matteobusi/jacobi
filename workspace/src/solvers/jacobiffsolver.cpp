@@ -7,6 +7,9 @@ JacobiFFSolver::JacobiFFSolver(const float** A, const float* b, int N, int nWork
 
 void JacobiFFSolver::deltax(const float* x, float *dest)
 {
+    std::chrono::time_point<std::chrono::system_clock> start, end;  
+
+    start = std::chrono::system_clock::now();    
     pf->parallel_for(0, mN, 1, mGrain, [&](const long i)
     {
         float s = 0.f;
@@ -17,4 +20,7 @@ void JacobiFFSolver::deltax(const float* x, float *dest)
             s+= mA[i][j]*x[j];
         dest[i] = (mb[i] - s)/mA[i][i];
     }, mnWorkers);
+    end = std::chrono::system_clock::now();
+
+    jr.compTime += ((std::chrono::duration<float>)(end-start)).count();
 }

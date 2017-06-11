@@ -3,21 +3,22 @@
 JacobiReport JacobiSolver::solve(int maxIterations, float eps, float *x)
 {
     std::chrono::time_point<std::chrono::system_clock> start, end;  
-    JacobiReport jr;
+    std::chrono::time_point<std::chrono::system_clock> startL, endL;  
+
     int k = 0;
     bool conv = false;
 
     jr.convTime = 0.f;
-    jr.compTime = 0.f;
     jr.updateTime = 0.f;
 
+    // These two are updated directly by deltax method!
+    jr.compTime = 0.f;
+    jr.sbTime = 0.f;
+
+    startL = std::chrono::system_clock::now();
     while (!conv)
     {
-        start = std::chrono::system_clock::now();
         deltax((const float*)x, dx);
-        end = std::chrono::system_clock::now();
-
-        jr.compTime += ((std::chrono::duration<float>)(end-start)).count();
 
         start = std::chrono::system_clock::now();
         update(x, (const float*) dx);
@@ -32,10 +33,13 @@ JacobiReport JacobiSolver::solve(int maxIterations, float eps, float *x)
 
         jr.convTime += ((std::chrono::duration<float>)(end-start)).count();
     }
+    endL = std::chrono::system_clock::now();
+
 
     jr.error = norm(dx);
     jr.nIterations = k;
     jr.nWorkers = getNWorkers();
+    jr.latency = ((std::chrono::duration<float>)(endL-startL)).count();
 
     return jr;
 }

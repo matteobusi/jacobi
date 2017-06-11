@@ -52,6 +52,6 @@ The idea is to split the matrix $A$ in rows of the same size and to feed said ro
 
 The performance model depends also on the number of workers, $w$, and $ T_{jacobi}(n, w)$ can be expanded --- ignoring $T_{conv}(n)$ and $T_{upd}(n)$ --- as:
 \[
-	 T_{jacobi}(n, w) = T_{w\_setup} (n, w) + T_{barrier} (n, w) + \frac{k}{w} \cdot T_{comp}(n)
+	 T_{jacobi}(n, w) = T_{setup} (n, w) + T_{barrier} (n, w) + \frac{k}{w} \cdot T_{comp}(n)
 \]
-where $T_{w\_setup} (n, w)$ is the time required to setup the $w$ workers, $T_{barrier} (n, w)$ is the total time spent by threads waiting each other and $\frac{k}{w} \cdot T_{comp}(n)$ is the ideal time needed to $w$ workers to compute the new value of the approximation of the solution.
+where $T_{setup} (n, w)$ is the time required to setup the $w$ workers, $T_{barrier} (n, w)$ is the total time spent by threads waiting each other and $\frac{k}{w} \cdot T_{comp}(n)$ is the ideal time needed to $w$ workers to compute the new value of the approximation of the solution.
