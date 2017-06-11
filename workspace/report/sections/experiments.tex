@@ -98,42 +98,51 @@ In this case, on the other hand, bigger $N$s lead to better performance metrics 
 In this case (up to $N = 30000$) cache coherence probably is not a bottleneck, since the cache on the Xeon Phi is bigger than the one on the Xeon CPU.
 \begin{table}
 	\centering
-	\begin{tabular}{llr}  
+	\begin{tabular}{clcccc}  
 		\toprule
-		\multicolumn{2}{c}{Item} \\
-		\cmidrule(r){1-2}
-		Animal    & Description & Price (\$) \\
+		 & & \multicolumn{2}{c}{\textbf{$N = 5000$}} & \multicolumn{2}{c}{\textbf{$N = 10000$}}\\
 		\midrule
-		Gnat      & per gram    & 13.65      \\
-		&    each     & 0.01       \\
-		Gnu       & stuffed     & 92.50      \\
-		Emu       & stuffed     & 33.33      \\
-		Armadillo & frozen      & 8.99       \\
+		 & & \textbf{Xeon CPU} & \textbf{Xeon Phi} & \textbf{Xeon CPU} & \textbf{Xeon Phi}\\
+		\cmidrule{3-6}		
+		\textbf{Sequential} & Latency (\si{seconds})& $0.049155$& $0.200321$ & $0.116605$& $0.773010$\\
+		\midrule
+		\textbf{FastFlow} & Latency w.\ $1$ worker (\si{seconds}) & $0.064645$ & $0.209576$ & $0.256767$ & $0.799476$\\
+		 & Best latency & $0.008042$ & $0.009522$ & $0.028808$ & $0.022374$\\
+		 & Workers for best & $12$ & $68$ & $12$ & $116$\\
+		\midrule
+		\textbf{Thread} &Latency w.\ $1$ worker (\si{seconds}) & $ $ & $ $ & $ $ & $ $\\
+				& Best latency & $ $ & $ $ & $ $ & $ $\\
+				& Workers for best & $ $ & $ $ & $ $ & $ $ \\
+				& Ratio & $ $ & $ $ & $ $ & $ $ \\
 		\bottomrule
 	\end{tabular}
-	\caption{Best configurations in terms of minimal latency for FastFlow implementation at different values of $N$}
-	\label{tab:ff}
+	\caption{Best configurations in terms of minimal latency for FastFlow and Thread implementations. $N = 5000$ and $N=10000$}
+	\label{tab:res0}
 \end{table}
-~
 \begin{table}
 	\centering
-	\begin{tabular}{llr}  
+	\begin{tabular}{clcccc}  
 		\toprule
-		\multicolumn{2}{c}{Item} \\
-		\cmidrule(r){1-2}
-		Animal    & Description & Price (\$) \\
+		& & \multicolumn{2}{c}{\textbf{$N = 15000$}} & \multicolumn{2}{c}{\textbf{$N = 30000$}}\\
 		\midrule
-		Gnat      & per gram    & 13.65      \\
-		&    each     & 0.01       \\
-		Gnu       & stuffed     & 92.50      \\
-		Emu       & stuffed     & 33.33      \\
-		Armadillo & frozen      & 8.99       \\
+		& & \textbf{Xeon CPU} & \textbf{Xeon Phi} & \textbf{Xeon CPU} & \textbf{Xeon Phi}\\
+		\cmidrule{3-6}		
+		\textbf{Sequential} & Latency (\si{seconds}) & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		\midrule
+		\textbf{FastFlow} & Latency (\si{seconds}) & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		& Best latency & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		& Workers for best & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		\midrule
+		\textbf{Thread} & Latency (\si{seconds}) &  $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		& Best latency & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		& Workers for best & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
+		& Ratio & $0.266411$ & $1.731800$ & $1.080730$ & $6.820180$\\
 		\bottomrule
 	\end{tabular}
-	\caption{Best configurations in terms of minimal latency for C++11 thread implementation at different values of $N$}
-	\label{tab:th}
+	\caption{Best configurations in terms of minimal latency for FastFlow and Thread implementations. $N = 15000$ and $N=30000$}
+	\label{tab:res1}
 \end{table}
-Table~\ref{tab:ff} shows, for each size $N$ of the system, the best configuration in terms of latency for the FastFlow implementation.
-Table~\ref{tab:th} shows the same data as Table~\ref{tab:ff}, but reports also the ratio between setup/barrier time and computing time (i.e.\ $({T_{barrier} + T_{setup})/T_{comp}}$) (full data is available in folder \verb|results| as \verb|csv| file, as explained in Section~\ref{sec:guide}).
+\alert{Table~\ref{tab:ff} shows, for each size $N$ of the system, the best configuration in terms of latency for the FastFlow implementation.
+Table~\ref{tab:th} shows the same data as Table~\ref{tab:ff}, but reports also the ratio between setup/barrier time and latency (i.e.\ $({T_{barrier} + T_{setup})/T_{jacobi}$) (full data is available in folder \verb|results| as \verb|csv| file, as explained in Section~\ref{sec:guide}).}
 
 Please note that (almost) none of the best configurations include a number of workers equal to the number of contexts, this is due to the fact that usually at least one context is used for orchestration.

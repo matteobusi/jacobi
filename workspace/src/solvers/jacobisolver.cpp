@@ -11,8 +11,7 @@ JacobiReport JacobiSolver::solve(int maxIterations, float eps, float *x)
     jr.convTime = 0.f;
     jr.updateTime = 0.f;
 
-    // These two are updated directly by deltax method!
-    jr.compTime = 0.f;
+    // This is updated directly by deltax method!
     jr.sbTime = 0.f;
 
     startL = std::chrono::system_clock::now();

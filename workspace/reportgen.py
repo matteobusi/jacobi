@@ -19,8 +19,11 @@ for p in ["host", "mic"]:
     for m in ["ff", "th"]:
         compl_seq = pd.DataFrame()
         compl_m = pd.DataFrame()
+        df_min = pd.DataFrame()
 
         print("Plotting", p, m)
+        print("========== proc: {} = impl: {} ==========".format(p, m))
+        
         for i in [5000, 10000, 15000, 30000]:
             df_seq = pd.read_csv("results/res_seq_" + p + "_" + str(i) + ".csv", delimiter=' *, *', engine='python')
             df_m = pd.read_csv("results/res_"+ m + "_" + p + "_" + str(i) +".csv", delimiter=' *, *', engine='python')
@@ -35,10 +38,16 @@ for p in ["host", "mic"]:
             df_m['scalab'] = df_m.apply(lambda row: m_time_0/row['latency'], axis=1)
             df_m['eff'] = df_m.apply(lambda row: row['s']/row['nw'], axis=1)
             
-            df_m['ratio'] =  df_m.apply(lambda row: row['sb_t']/row['comp_t'], axis=1)
+            df_m['ratio'] =  df_m.apply(lambda row: row['sb_t']/row['latency'], axis=1)
 
             compl_seq = compl_seq.append(df_seq, ignore_index=True)
             compl_m = compl_m.append(df_m, ignore_index=True)
+
+            df_1 = df_m[ df_m['nw'] == 1 ][['N', 'latency']]
+            df_best = df_m[ df_m['latency'] == df_m['latency'].min() ][['N', 'nw', 'latency', 'sb_t', 'ratio']]
+            df_best['latency_1'] = df_best.apply(lambda row: df_1[df_1['N'] == row['N']]['latency'], axis=1)
+            df_best['latency_seq'] = df_best.apply(lambda row: seq_time, axis=1)
+            df_min = df_min.append(df_best, ignore_index=True)
 
         # Add ideal values for efficiency, scalability and speedup to the dataframe
         for nw in compl_m['nw'].unique():
@@ -61,15 +70,5 @@ for p in ["host", "mic"]:
         #   - FF : best nw, latency (best), latency (1)
         #   - TH : best nw, latency (best), latency(1), ratio
         #   - Seq : latency
-        df_min = pd.DataFrame()
-        for n in [5000, 10000, 15000, 30000]:
-            df_1 = compl_m[compl_m['N'] == n ][ compl_m['nw'] == 1 ][['N', 'latency']]
-            df_best = compl_m[compl_m['N'] == n ]
-            df_best = df_best[ df_best['latency'] == df_best['latency'].min() ][['N', 'nw', 'latency', 'sb_t', 'comp_t', 'ratio']]
-            df_best['latency_1'] = df_best.apply(lambda row: df_1[df_1['N'] == row['N']]['latency'], axis=1)
-            df_min = df_min.append(df_best, ignore_index=True)
-            #print(df_best)
-
-        print("========== proc: {} = impl: {} ==========".format(p, m))
         print(df_min)
         print("==============================================")
