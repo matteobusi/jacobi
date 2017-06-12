@@ -1,4 +1,4 @@
-Summing up the data let us to conclude that:
+Summing up, we can conclude that:
 \begin{itemize}
 %	\item The time spent in setting up the workers and in the barrier is not always negligible, especially as $N$ increases
 	\item The ratio between the time spent in setup/barrier and the latency increases as $w$ increases, especially for smaller values of $N$.
@@ -9,7 +9,7 @@ Summing up the data let us to conclude that:
 So, decent performances as Table~\ref{tab:res0} and Table~\ref{tab:res1} were achieved.
 To have a better programs in term of measured metrics one could, for example:
 \begin{itemize}
-	\item Optimize the code to work better on a specific architecture,
-	\item removing unnecessary memory allocations or use better allocators,
-	\item reduce idle time of each worker by giving a more evenly distributed workload.
+	\item Optimize the code to work even better on a specific architecture,
+	\item removing unnecessary memory allocations (e.g.\ by re-using workers) or use better allocators,
+	\item reduce idle time of workers by giving a more evenly distributed workload.
 \end{itemize} 

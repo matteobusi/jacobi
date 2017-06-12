@@ -28,7 +28,7 @@ for p in ["host", "mic"]:
             df_seq = pd.read_csv("results/res_seq_" + p + "_" + str(i) + ".csv", delimiter=' *, *', engine='python')
             df_m = pd.read_csv("results/res_"+ m + "_" + p + "_" + str(i) +".csv", delimiter=' *, *', engine='python')
        
-            seq_time = df_seq.loc[df_m['nw'] == 1]['latency'][0]
+            seq_time = df_seq.loc[df_seq['nw'] == 1]['latency'][0]
             m_time_0 = df_m.loc[df_m['nw'] == 1]['latency'][0]
                 
             df_seq['N'] = df_seq.apply(lambda row: i, axis=1)
