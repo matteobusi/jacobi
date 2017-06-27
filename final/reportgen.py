@@ -24,7 +24,7 @@ for p in ["host", "mic"]:
         print("Plotting", p, m)
         print("========== proc: {} = impl: {} ==========".format(p, m))
         
-        for i in [5000, 10000]: #, 15000, 30000]:
+        for i in [5000, 10000, 15000, 30000]:
             df_seq = pd.read_csv("results/res_seq_" + p + "_" + str(i) + ".csv", delimiter=' *, *', engine='python')
             df_m = pd.read_csv("results/res_"+ m + "_" + p + "_" + str(i) +".csv", delimiter=' *, *', engine='python')
        
